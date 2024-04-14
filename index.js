@@ -4,7 +4,9 @@ const server = require('http').createServer(app);
 require('dotenv').config()
 const expressEjsLayouts = require('express-ejs-layouts');
 const { AllRoutes } = require('./router/router');
-const {PORT} = process.env
+const {PORT} = process.env;
+
+
 app.use(express.static('public'));
 app.use(express.json());
 app.use(expressEjsLayouts)
