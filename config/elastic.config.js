@@ -1,17 +1,15 @@
 const { Client } = require("@elastic/elasticsearch");
-const { ElASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_HOST } = process.env;
-
+const { ELASTIC_USERNAME, ELASTIC_PASSWORD, ELASTIC_HOST } = process.env;
 const elasticClient = new Client({
   node: ELASTIC_HOST,
   auth: {
-    username: ElASTIC_USERNAME,
+    username: ELASTIC_USERNAME,
     password: ELASTIC_PASSWORD,
   },
   tls: {
-    rejectUnauthorized: true,
+    rejectUnauthorized: false,
   },
 });
-
 module.exports = {
   elasticClient,
 };
