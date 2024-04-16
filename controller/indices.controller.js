@@ -8,8 +8,6 @@ async function createIndex(req, res, next) {
     if (!indexName) {
       throw createHttpError.BadRequest("Invalid value of index name");
     }
-
-    // Assuming elasticClient is properly initialized
     const result = await elasticClient.indices.create({ index: indexName });
     console.log(result);
     return res.json({
@@ -17,23 +15,30 @@ async function createIndex(req, res, next) {
       message: "Index created successfully",
     });
   } catch (error) {
-    next(error); // Pass error to the error-handling middleware
+    next(error);
   }
 }
 
 async function removeIndex(req, res, next) {
   try {
+    const { indexName } = req.params;
+    const removeResult = await elasticClient.indices.delete({
+      index: indexName,
+    });
+    return res.json({
+      removeResult,
+    });
   } catch (error) {
     next(error);
   }
 }
-
+  
 async function getIndices(req, res, next) {
   try {
     const indices = await elasticClient.indices.getAlias();
-    const regexp = /^\.+/
+    const regexp = /^\.+/;
     return res.json({
-      indices : Object.keys(indices).filter(item => !regexp.test(item)),
+      indices: Object.keys(indices).filter((item) => !regexp.test(item)),
     });
   } catch (error) {
     next(error);

@@ -1,3 +1,5 @@
+const { elasticClient } = require("../config/elastic.config");
+const blogIndex = "blog"
 async function getALlBlogs(req,res,next){
     try {
         
@@ -8,7 +10,16 @@ async function getALlBlogs(req,res,next){
 
 async function createBlog(req,res,next){
     try {
-        
+        const {title, author , text} = req.body;
+        const createResult = await elasticClient.index({
+            index : blogIndex,
+            document : {
+                title,
+                text,
+                author
+            }
+        })
+        res.json(createResult)
     } catch (error) {
         next(error)
     }
