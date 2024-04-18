@@ -2,7 +2,12 @@ const { elasticClient } = require("../config/elastic.config");
 const blogIndex = "blog"
 async function getALlBlogs(req,res,next){
     try {
-        
+        const value = req.params.value
+        const blogs = await elasticClient.search({
+            index: blogIndex,
+            q : value
+        })
+        return res.json(blogs.hits.hits)
     } catch (error) {
         next(error)
     }
