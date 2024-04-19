@@ -73,8 +73,36 @@ async function updateBlog(req, res, next) {
   }
 }
 
+async function updateBlog2(req, res, next) {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    Object.keys(data).forEach((key) => {
+      if (!data[key]) delete data[key];
+    });
+    const updateResut = await elasticClient.update({
+      index: blogIndex,
+      id,
+      doc: data,
+    });
+    return res.json(updateResut);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function searchByTitle(req, res, next) {
   try {
+    const { title } = req.query;
+    const result = await elasticClient.search({
+      index: blogIndex,
+      query: {
+        match: {
+          title,
+        },
+      },
+    });
+    return res.json(result.hits.hits);
   } catch (error) {
     next(error);
   }
@@ -82,6 +110,17 @@ async function searchByTitle(req, res, next) {
 
 async function searchByMultiField(req, res, next) {
   try {
+    const { searchValue } = req.query;
+    const result = await elasticClient.search({
+      index: blogIndex,
+      query: {
+        multi_match: {
+          query: searchValue,
+          fields: ["title", "text"],
+        },
+      },
+    });
+    return res.json(result.hits.hits);
   } catch (error) {
     next(error);
   }
@@ -102,4 +141,5 @@ module.exports = {
   searchByMultiField,
   searchByRegexp,
   updateBlog,
+  updateBlog2,
 };
