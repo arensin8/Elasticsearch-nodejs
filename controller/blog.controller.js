@@ -125,9 +125,57 @@ async function searchByMultiField(req, res, next) {
     next(error);
   }
 }
-
 async function searchByRegexp(req, res, next) {
   try {
+    const { search } = req.query;
+    const result = await elasticClient.search({
+      index: blogIndex,
+      body: {
+        query: {
+          regexp: {
+            title: {
+              value: `.*${search}.*`,
+            },
+          },
+        },
+      },
+    });
+    return res.json(result.hits.hits);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function searchByRegexpMultiFields(req, res, next) {
+  try {
+    const { search } = req.query;
+    const result = await elasticClient.search({
+      index: blogIndex,
+      body: {
+        query: {
+          bool: {
+            should: [
+              {
+                regexp: {
+                  title: { value: `.*${search}.*` },
+                },
+              },
+              {
+                regexp: {
+                  text: { value: `.*${search}.*` },
+                },
+              },
+              {
+                regexp: {
+                  author: { value: `.*${search}.*` },
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+    return res.json(result.hits.hits);
   } catch (error) {
     next(error);
   }
@@ -142,4 +190,5 @@ module.exports = {
   searchByRegexp,
   updateBlog,
   updateBlog2,
+  searchByRegexpMultiFields
 };
