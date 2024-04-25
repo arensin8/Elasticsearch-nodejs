@@ -1,11 +1,11 @@
 const input = document.getElementById("search");
 const dataList = document.getElementById("blog-result");
-input.addEventListener("keyup", async () => {
+input.addEventListener("keyup", async function () {
   dataList.innerHTML = "";
-  const search = this.input.value;
+  const search = this.value;
   const result = await (
     await fetch(
-      `http://localhost:3333/blogs/router/blog.routes.js?search=${search}`
+      `http://localhost:3333/blogs/searchByRegexpMulti?search=${search}`
     )
   ).json();
   for (const blog of result) {
@@ -16,6 +16,7 @@ input.addEventListener("keyup", async () => {
     const strong = document.createElement("strong");
     small.innerHTML = blog._source.text;
     strong.innerHTML = blog._source.author;
+    item.appendChild(br);
     item.appendChild(br);
     item.appendChild(small);
     item.appendChild(br);
